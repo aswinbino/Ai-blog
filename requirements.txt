@@ -1,0 +1,6 @@
+flask
+openai
+python-dotenv
+fpdf2
+pydantic
+pydantic

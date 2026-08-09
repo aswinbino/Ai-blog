@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Project
+generated_docs/
+*.pdf
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.vscode/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+node_modules/
+.node_modules
+node_modules
+.node_modules/

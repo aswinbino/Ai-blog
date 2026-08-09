@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/dist/$1"
+    }
+  ],
+  "env": {
+    "NODE_VERSION": "20.x",
+    "VERCEL": "1",
+    "PYTHON_VERSION": "3.12"
+  }
+}
