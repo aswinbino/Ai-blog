@@ -40,9 +40,9 @@ const agents = [
       <div class="scroll-reveal mb-20 flex flex-col md:flex-row md:items-end md:justify-between gap-6 px-4 md:px-2">
         <div class="md:pl-4">
           <p class="text-[10px] font-black uppercase tracking-[0.3em] text-brand-orange mb-4">Architecture</p>
-          <h2 class="text-5xl md:text-6xl font-black tracking-tighter text-black leading-none">The Swarm<br/>Intelligence.</h2>
+          <h2 class="text-5xl md:text-6xl font-black tracking-tighter text-white leading-none">The Swarm<br/>Intelligence.</h2>
         </div>
-        <p class="text-black/40 font-bold text-base max-w-xs md:text-right leading-relaxed md:pr-4">
+        <p class="text-white/30 font-bold text-base max-w-xs md:text-right leading-relaxed md:pr-4">
           Four specialized agents, one unified mission — designed for precision and speed.
         </p>
       </div>
@@ -51,22 +51,22 @@ const agents = [
         <div
           v-for="(agent, i) in agents"
           :key="agent.name"
-          class="scroll-reveal-stagger group bg-white border-2 border-black/8 p-8 rounded-[2rem] flex flex-col justify-between transition-all duration-500 hover:-translate-y-3 hover:border-black/20 hover:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.18)] cursor-default"
+          class="scroll-reveal-stagger group bg-[#111111] border border-white/7 p-8 rounded-[2rem] flex flex-col justify-between transition-all duration-500 hover:-translate-y-3 hover:border-white/14 hover:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.6)] cursor-default"
         >
           <div class="flex items-start justify-between mb-8">
             <div
-              :class="['w-12 h-12 rounded-xl bg-neutral-50 border-2 border-black/8 flex items-center justify-center transition-all duration-500 text-black/30', agent.color, 'group-hover:border-transparent group-hover:text-white group-hover:scale-110']"
+              :class="['w-12 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center transition-all duration-500 text-white/25', agent.color, 'group-hover:border-transparent group-hover:text-white group-hover:scale-110']"
             >
               <component :is="agent.icon" class="w-5 h-5" />
             </div>
-            <span class="text-[10px] font-black text-black/15 tracking-[0.2em]">{{ agent.num }}</span>
+            <span class="text-[10px] font-black text-white/10 tracking-[0.2em]">{{ agent.num }}</span>
           </div>
           
           <div>
-            <h3 class="text-[11px] font-black tracking-[0.25em] uppercase text-black mb-3">{{ agent.name }}</h3>
+            <h3 class="text-[11px] font-black tracking-[0.25em] uppercase text-white mb-3">{{ agent.name }}</h3>
 
             <div class="w-6 h-0.5 bg-brand-orange rounded-full mb-4 transition-all duration-300 group-hover:w-full"></div>
-            <p class="text-black/40 font-medium leading-relaxed text-sm">{{ agent.desc }}</p>
+            <p class="text-white/30 font-medium leading-relaxed text-sm">{{ agent.desc }}</p>
           </div>
         </div>
       </div>
@@ -74,3 +74,4 @@ const agents = [
     </div>
   </section>
 </template>
+

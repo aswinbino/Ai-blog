@@ -71,6 +71,7 @@ def run_swarm():
                     jobs[tid]["status"] = "completed"
                     jobs[tid]["pdf_url"] = f"/api/download/{pdf_filename}"
                     jobs[tid]["title"] = lr["title"]
+                    jobs[tid]["content"] = lr["content"]
                 else:
                     jobs[tid]["status"] = "failed"
                     jobs[tid]["logs"].append("Error: Failed to generate PDF document.")

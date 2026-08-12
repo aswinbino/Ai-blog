@@ -1,5 +1,6 @@
 import os
 import json
+# pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 load_dotenv()
 from openai import OpenAI
@@ -44,16 +45,29 @@ def get_llm_client_and_model(requested_model: str):
         return OpenAI(
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
             api_key=gemini_key
-        ), "gemini-2.0-flash"
+        ), "gemini-3.6-flash"
     elif openai_key:
         return OpenAI(api_key=openai_key), "gpt-4o-mini"
     else:
         raise ValueError("No API Key set! Please configure GROQ_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY in your .env file.")
 
 
+import time
+import re
+
+def clean_json_string(s: str) -> str:
+    if not s:
+        return s
+    s = s.strip()
+    if s.startswith("```"):
+        s = re.sub(r"^```[a-zA-Z]*\n?", "", s)
+        s = re.sub(r"\n?```$", "", s).strip()
+    s = re.sub(r'\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})', r'\\\\', s)
+    return s
+
 def call_structured_llm(model: str, system_prompt: str, user_prompt: str, response_model: Type[T]) -> T:
     """
-    Call the LLM and enforce a structured Pydantic response format.
+    Call the LLM and enforce a structured Pydantic response format with automatic retries and JSON sanitization.
     """
     client, target_model = get_llm_client_and_model(model)
     
@@ -66,20 +80,31 @@ def call_structured_llm(model: str, system_prompt: str, user_prompt: str, respon
         f"SCHEMA: {schema_json}"
     )
     
-    try:
-        response = client.chat.completions.create(
-            model=target_model,
-            messages=[
-                {"role": "system", "content": full_system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            response_format={"type": "json_object"}
-        )
-        content = response.choices[0].message.content
-        return response_model.model_validate_json(content)
-    except Exception as e:
-        print(f"[DEBUG] LLM Error or Validation Fail ({target_model}): {str(e)}")
-        raise
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = client.chat.completions.create(
+                model=target_model,
+                messages=[
+                    {"role": "system", "content": full_system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                response_format={"type": "json_object"}
+            )
+            content = response.choices[0].message.content
+            try:
+                return response_model.model_validate_json(content)
+            except Exception:
+                cleaned = clean_json_string(content)
+                data = json.loads(cleaned, strict=False)
+                return response_model.model_validate(data)
+        except Exception as e:
+            err_msg = str(e)
+            print(f"[DEBUG] Attempt {attempt + 1}/{max_retries} failed ({target_model}): {err_msg}")
+            if attempt < max_retries - 1 and ("503" in err_msg or "UNAVAILABLE" in err_msg or "rate_limit" in err_msg.lower()):
+                time.sleep(2 * (attempt + 1))
+                continue
+            raise
 
 
 def run_pydantic_ai_pipeline(topic: str) -> FinalBlog:
