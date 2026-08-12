@@ -35,21 +35,22 @@ def get_llm_client_and_model(requested_model: str):
         else:
             raise ValueError("No API Key set! Please add GEMINI_API_KEY or GROQ_API_KEY or OPENAI_API_KEY to your .env file.")
 
-    # Default logic: prefer Groq -> Gemini -> OpenAI
+    # Groq primary and secondary keys support
     if groq_key:
+        # Use primary Groq key
         return OpenAI(
             base_url="https://api.groq.com/openai/v1",
             api_key=groq_key
         ), "llama-3.3-70b-versatile"
-    elif gemini_key:
+    elif os.getenv("GROQ_API_KEY_2"):
+        # Fallback to secondary Groq key
+        secondary_key = os.getenv("GROQ_API_KEY_2")
         return OpenAI(
-            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-            api_key=gemini_key
-        ), "gemini-3.6-flash"
-    elif openai_key:
-        return OpenAI(api_key=openai_key), "gpt-4o-mini"
+            base_url="https://api.groq.com/openai/v1",
+            api_key=secondary_key
+        ), "llama-3.3-70b-versatile"
     else:
-        raise ValueError("No API Key set! Please configure GROQ_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY in your .env file.")
+        raise ValueError("No GROQ_API_KEY or GROQ_API_KEY_2 set! Please add your Groq API key(s) to the .env file.")
 
 
 import time
